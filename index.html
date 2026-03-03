@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bespoke | 小林茂雄 広告企画・戦略立案事務所</title>
+    <meta name="description" content="Bespoke（ビスポーク）は、企業・自治体・個人のための広告企画事務所です。課題の本質に合わせた「仕立ての良い」解決策をご提案します。">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;700&family=Noto+Sans+JP:wght@300;400;500;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --brand-dark: #0e0e0e;
+            --brand-gold: #c2a37d;
+            --brand-gold-light: #d4b896;
+            --brand-gold-dark: #a8895f;
+            --bg-light: #fafaf8;
+            --text-muted: #8a8a8a;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            color: var(--brand-dark);
+            background-color: var(--bg-light);
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, .serif {
+            font-family: 'Noto Serif JP', serif;
+        }
+
+        .cormorant {
+            font-family: 'Cormorant Garamond', serif;
+        }
+
+        /* ── Scrollbar ── */
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: var(--bg-light); }
+        ::-webkit-scrollbar-thumb { background: var(--brand-gold); border-radius: 2px; }
+
+        /* ── Noise texture overlay ── */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0.4;
+        }
+
+        /* ── Reveal animation ── */
+        .reveal {
+            opacity: 0;
+            transform: translateY(32px);
+            transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1),
+                        transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .reveal-delay-1 { transition-delay: 0.1s; }
+        .reveal-delay-2 { transition-delay: 0.2s; }
+        .reveal-delay-3 { transition-delay: 0.3s; }
+        .reveal-delay-4 { transition-delay: 0.4s; }
+
+        /* ── Gold line ── */
+        .gold-line {
+            display: block;
+            width: 40px;
+            height: 1px;
+            background: var(--brand-gold);
+            margin: 0 auto 2rem;
+        }
+
+        /* ── Navigation ── */
+        #header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            transition: background 0.4s ease, box-shadow 0.4s ease, padding 0.4s ease;
+        }
+        #header.scrolled {
+            background: rgba(250, 250, 248, 0.92);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            box-shadow: 0 1px 0 rgba(0,0,0,0.06);
+        }
+        .nav-link {
+            position: relative;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.2em;
+            color: #6b6b6b;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: var(--brand-gold);
+            transition: width 0.3s ease;
+        }
+        .nav-link:hover { color: var(--brand-dark); }
+        .nav-link:hover::after { width: 100%; }
+
+        /* ── Mobile menu ── */
+        #mobile-menu {
+            position: fixed;
+            inset: 0;
+            z-index: 99;
+            background: var(--brand-dark);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 2.5rem;
+            transform: translateX(100%);
+            transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        #mobile-menu.open {
+            transform: translateX(0);
+        }
+        .mobile-nav-link {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2.5rem;
+            font-weight: 300;
+            letter-spacing: 0.15em;
+            color: rgba(255,255,255,0.85);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        .mobile-nav-link:hover { color: var(--brand-gold); }
+
+        /* ── Hero ── */
+        .hero-bg {
+            background-color: var(--bg-light);
+        }
+        .hero-grid {
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(194,163,125,0.06) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(194,163,125,0.06) 1px, transparent 1px);
+            background-size: 80px 80px;
+        }
+        .hero-gradient {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 200px;
+            background: linear-gradient(to bottom, transparent, var(--bg-light));
+        }
+
+        /* ── Gold badge ── */
+        .gold-badge {
+            display: inline-block;
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: 0.5em;
+            color: var(--brand-gold);
+            text-transform: uppercase;
+            border: 1px solid rgba(194,163,125,0.3);
+            padding: 6px 16px;
+            border-radius: 100px;
+        }
+
+        /* ── Service card ── */
+        .service-card {
+            position: relative;
+            padding: 2.5rem;
+            border: 1px solid rgba(0,0,0,0.07);
+            background: #fff;
+            border-radius: 2px;
+            transition: border-color 0.3s, box-shadow 0.3s, transform 0.3s;
+            overflow: hidden;
+        }
+        .service-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 3px;
+            height: 0;
+            background: var(--brand-gold);
+            transition: height 0.4s ease;
+        }
+        .service-card:hover {
+            border-color: rgba(194,163,125,0.3);
+            box-shadow: 0 8px 40px rgba(0,0,0,0.06);
+            transform: translateY(-2px);
+        }
+        .service-card:hover::before {
+            height: 100%;
+        }
+        .service-num {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 3.5rem;
+            font-weight: 300;
+            color: rgba(0,0,0,0.06);
+            line-height: 1;
+            margin-bottom: 1rem;
+            transition: color 0.3s;
+        }
+        .service-card:hover .service-num {
+            color: rgba(194,163,125,0.2);
+        }
+
+        /* ── Vision section ── */
+        .vision-bg {
+            background: var(--brand-dark);
+            position: relative;
+            overflow: hidden;
+        }
+        .vision-bg::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(ellipse at 60% 40%, rgba(194,163,125,0.08) 0%, transparent 60%);
+            pointer-events: none;
+        }
+
+        /* ── Profile ── */
+        .profile-img-wrap {
+            position: relative;
+        }
+        .profile-img-wrap::after {
+            content: '';
+            position: absolute;
+            bottom: -12px;
+            right: -12px;
+            width: 100%;
+            height: 100%;
+            border: 1px solid var(--brand-gold);
+            border-radius: 2px;
+            z-index: 0;
+            transition: bottom 0.3s, right 0.3s;
+        }
+        .profile-img-wrap:hover::after {
+            bottom: -8px;
+            right: -8px;
+        }
+        .profile-img-inner {
+            position: relative;
+            z-index: 1;
+            background: #e8e4de;
+            border-radius: 2px;
+            overflow: hidden;
+            aspect-ratio: 3/4;
+        }
+
+        /* ── Contact form ── */
+        .form-input {
+            width: 100%;
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid rgba(0,0,0,0.15);
+            padding: 0.75rem 0;
+            font-family: 'Noto Sans JP', sans-serif;
+            font-size: 0.9rem;
+            color: var(--brand-dark);
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        .form-input::placeholder { color: #bbb; }
+        .form-input:focus { border-color: var(--brand-gold); }
+
+        .form-label {
+            display: block;
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: 0.2em;
+            color: var(--text-muted);
+            margin-bottom: 0.25rem;
+            text-transform: uppercase;
+        }
+
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: var(--brand-dark);
+            color: #fff;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            padding: 1.1rem 2.5rem;
+            border: 1px solid var(--brand-dark);
+            cursor: pointer;
+            transition: background 0.3s, color 0.3s, border-color 0.3s;
+            border-radius: 1px;
+        }
+        .btn-primary:hover {
+            background: var(--brand-gold);
+            border-color: var(--brand-gold);
+            color: #fff;
+        }
+
+        /* ── Footer ── */
+        .footer-bg {
+            background: var(--brand-dark);
+        }
+
+        /* ── Cursor dot ── */
+        .cursor-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--brand-gold);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 10000;
+            transform: translate(-50%, -50%);
+            transition: transform 0.1s ease, width 0.3s, height 0.3s, opacity 0.3s;
+        }
+        .cursor-ring {
+            width: 36px;
+            height: 36px;
+            border: 1px solid rgba(194,163,125,0.5);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 10000;
+            transform: translate(-50%, -50%);
+            transition: transform 0.15s ease, width 0.3s, height 0.3s, opacity 0.3s;
+        }
+
+        /* ── Progress bar ── */
+        #progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 2px;
+            background: var(--brand-gold);
+            z-index: 200;
+            transition: width 0.1s linear;
+        }
+
+        /* ── Section divider ── */
+        .section-divider {
+            width: 1px;
+            height: 80px;
+            background: linear-gradient(to bottom, transparent, var(--brand-gold), transparent);
+            margin: 0 auto;
+        }
+
+        /* ── Marquee ── */
+        .marquee-wrap {
+            overflow: hidden;
+            white-space: nowrap;
+            border-top: 1px solid rgba(0,0,0,0.06);
+            border-bottom: 1px solid rgba(0,0,0,0.06);
+            padding: 1rem 0;
+            background: #fff;
+        }
+        .marquee-inner {
+            display: inline-block;
+            animation: marquee 30s linear infinite;
+        }
+        .marquee-item {
+            display: inline-block;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 0.85rem;
+            font-weight: 300;
+            letter-spacing: 0.3em;
+            color: #bbb;
+            padding: 0 3rem;
+        }
+        .marquee-item span {
+            color: var(--brand-gold);
+            margin-right: 3rem;
+        }
+        @keyframes marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        /* ── Hamburger ── */
+        .hamburger {
+            width: 28px;
+            height: 20px;
+            position: relative;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .hamburger span {
+            display: block;
+            width: 100%;
+            height: 1px;
+            background: var(--brand-dark);
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s;
+            transform-origin: center;
+        }
+        .hamburger.open span:nth-child(1) {
+            transform: translateY(9.5px) rotate(45deg);
+            background: #fff;
+        }
+        .hamburger.open span:nth-child(2) {
+            opacity: 0;
+        }
+        .hamburger.open span:nth-child(3) {
+            transform: translateY(-9.5px) rotate(-45deg);
+            background: #fff;
+        }
+
+        /* ── Tooltip / Toast ── */
+        #toast {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background: var(--brand-dark);
+            color: #fff;
+            font-size: 12px;
+            letter-spacing: 0.1em;
+            padding: 0.75rem 1.5rem;
+            border-radius: 100px;
+            opacity: 0;
+            transition: opacity 0.4s, transform 0.4s;
+            z-index: 9998;
+            pointer-events: none;
+        }
+        #toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        @media (max-width: 768px) {
+            .cursor-dot, .cursor-ring { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Progress Bar -->
+<div id="progress-bar"></div>
+
+<!-- Custom Cursor -->
+<div class="cursor-dot" id="cursor-dot"></div>
+<div class="cursor-ring" id="cursor-ring"></div>
+
+<!-- Toast -->
+<div id="toast">送信しました。近日中にご連絡いたします。</div>
+
+<!-- Mobile Menu -->
+<div id="mobile-menu" role="dialog" aria-modal="true" aria-label="ナビゲーション">
+    <a href="#vision" class="mobile-nav-link" data-close-menu>Vision</a>
+    <a href="#services" class="mobile-nav-link" data-close-menu>Services</a>
+    <a href="#profile" class="mobile-nav-link" data-close-menu>Profile</a>
+    <a href="#contact" class="mobile-nav-link" data-close-menu>Contact</a>
+    <div style="width:40px;height:1px;background:rgba(194,163,125,0.4);margin-top:1rem;"></div>
+    <span style="font-size:10px;letter-spacing:0.4em;color:rgba(255,255,255,0.3);margin-top:0.5rem;">BESPOKE OFFICE</span>
+</div>
+
+<!-- Header -->
+<header id="header">
+    <div class="max-w-6xl mx-auto px-6 h-20 flex justify-between items-center">
+        <a href="#" class="flex items-center gap-3 text-decoration-none" style="text-decoration:none;">
+            <span class="cormorant text-2xl font-light tracking-[0.25em]" style="color:var(--brand-dark);">Bespoke</span>
+            <span style="width:1px;height:18px;background:rgba(194,163,125,0.4);display:inline-block;"></span>
+            <span style="font-size:9px;letter-spacing:0.2em;color:var(--text-muted);font-weight:500;">OFFICE</span>
+        </a>
+        <nav class="hidden md:flex items-center space-x-10">
+            <a href="#vision" class="nav-link">VISION</a>
+            <a href="#services" class="nav-link">SERVICES</a>
+            <a href="#profile" class="nav-link">PROFILE</a>
+            <a href="#contact" class="nav-link">CONTACT</a>
+        </nav>
+        <button id="menu-btn" class="md:hidden z-[101] relative" aria-label="メニューを開く">
+            <div class="hamburger" id="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </button>
+    </div>
+</header>
+
+<!-- Hero -->
+<section class="hero-bg relative min-h-screen flex flex-col items-start justify-center pt-20 px-6 overflow-hidden">
+    <div class="hero-grid"></div>
+    <div class="hero-gradient"></div>
+
+    <!-- Decorative large text -->
+    <div class="absolute right-0 top-1/2 -translate-y-1/2 select-none pointer-events-none overflow-hidden" style="opacity:0.025;">
+        <span class="cormorant" style="font-size:clamp(8rem,20vw,18rem);font-weight:300;letter-spacing:-0.02em;color:var(--brand-dark);white-space:nowrap;">Bespoke</span>
+    </div>
+
+    <div class="max-w-6xl w-full mx-auto relative z-10">
+        <div class="reveal">
+            <div class="gold-badge mb-8">Tailored Strategy &amp; Planning</div>
+        </div>
+        <div class="reveal reveal-delay-1">
+            <h1 class="text-5xl md:text-7xl lg:text-8xl font-bold serif leading-[1.15] mb-8" style="letter-spacing:-0.01em;">
+                対話から導き出す、<br>
+                <span style="color:var(--brand-gold);">唯一無二</span>の戦略。
+            </h1>
+        </div>
+        <div class="reveal reveal-delay-2">
+            <p class="text-base md:text-lg text-stone-500 font-light leading-relaxed max-w-xl mb-12">
+                Bespoke（ビスポーク）は、企業・自治体・個人のための広告企画事務所です。<br>
+                課題の本質に合わせた「仕立ての良い」解決策をご提案します。
+            </p>
+        </div>
+        <div class="reveal reveal-delay-3 flex items-center gap-8">
+            <a href="#services" class="btn-primary">
+                事業内容を見る
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 7h12M8 2l5 5-5 5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </a>
+            <a href="#contact" style="font-size:10px;font-weight:700;letter-spacing:0.25em;color:var(--text-muted);text-decoration:none;transition:color 0.3s;" onmouseover="this.style.color='var(--brand-gold)'" onmouseout="this.style.color='var(--text-muted)'">
+                CONTACT →
+            </a>
+        </div>
+    </div>
+
+    <!-- Scroll indicator -->
+    <div class="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 reveal reveal-delay-4">
+        <span style="font-size:8px;letter-spacing:0.4em;color:#bbb;font-weight:700;">SCROLL</span>
+        <div style="width:1px;height:50px;background:linear-gradient(to bottom,var(--brand-gold),transparent);animation:scrollPulse 2s ease-in-out infinite;"></div>
+    </div>
+</section>
+
+<style>
+@keyframes scrollPulse {
+    0%,100% { opacity:0.4; transform:scaleY(1); }
+    50% { opacity:1; transform:scaleY(1.1); }
+}
+</style>
+
+<!-- Marquee -->
+<div class="marquee-wrap">
+    <div class="marquee-inner">
+        <span class="marquee-item"><span>✦</span>広告企画・戦略立案</span>
+        <span class="marquee-item"><span>✦</span>営業開発支援</span>
+        <span class="marquee-item"><span>✦</span>事業提携</span>
+        <span class="marquee-item"><span>✦</span>仲介・紹介・プロデュース</span>
+        <span class="marquee-item"><span>✦</span>自治体・任意団体支援</span>
+        <span class="marquee-item"><span>✦</span>Communication is Craftsmanship</span>
+        <span class="marquee-item"><span>✦</span>広告企画・戦略立案</span>
+        <span class="marquee-item"><span>✦</span>営業開発支援</span>
+        <span class="marquee-item"><span>✦</span>事業提携</span>
+        <span class="marquee-item"><span>✦</span>仲介・紹介・プロデュース</span>
+        <span class="marquee-item"><span>✦</span>自治体・任意団体支援</span>
+        <span class="marquee-item"><span>✦</span>Communication is Craftsmanship</span>
+    </div>
+</div>
+
+<!-- Vision Section -->
+<section id="vision" class="vision-bg py-36 px-6">
+    <div class="max-w-5xl mx-auto">
+        <div class="reveal text-center mb-20">
+            <span class="gold-badge" style="border-color:rgba(194,163,125,0.25);color:var(--brand-gold);">Our Philosophy</span>
+            <h2 class="cormorant text-5xl md:text-6xl font-light italic mt-8 mb-4" style="color:rgba(255,255,255,0.92);letter-spacing:0.02em;">
+                "Communication<br>is Craftsmanship"
+            </h2>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-16 items-start">
+            <div class="reveal reveal-delay-1">
+                <div style="width:40px;height:1px;background:var(--brand-gold);margin-bottom:2rem;"></div>
+                <p class="text-base leading-loose font-light" style="color:rgba(255,255,255,0.6);">
+                    宣伝、PR、販売促進——。その手法が無数に存在する現代だからこそ、大切なのは「誰に何を、どう届けるか」という本質的な設計図です。
+                </p>
+            </div>
+            <div class="reveal reveal-delay-2">
+                <div style="width:40px;height:1px;background:var(--brand-gold);margin-bottom:2rem;"></div>
+                <p class="text-base leading-loose font-light" style="color:rgba(255,255,255,0.6);">
+                    私たちは、お客様との対話（Speak）から最善の企画を導き出し、実行まで伴走します。特許品の販売支援や事業提携、営業開発支援など、ビジネスの根幹を支える仲介・紹介業務も承っております。
+                </p>
+            </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="grid grid-cols-3 gap-8 mt-24 pt-16 reveal" style="border-top:1px solid rgba(255,255,255,0.07);">
+            <div class="text-center">
+                <div class="cormorant text-5xl font-light" style="color:var(--brand-gold);">1994</div>
+                <div style="font-size:9px;letter-spacing:0.3em;color:rgba(255,255,255,0.3);margin-top:0.5rem;font-weight:700;">SINCE</div>
+            </div>
+            <div class="text-center">
+                <div class="cormorant text-5xl font-light" style="color:var(--brand-gold);">4</div>
+                <div style="font-size:9px;letter-spacing:0.3em;color:rgba(255,255,255,0.3);margin-top:0.5rem;font-weight:700;">SERVICES</div>
+            </div>
+            <div class="text-center">
+                <div class="cormorant text-5xl font-light" style="color:var(--brand-gold);">∞</div>
+                <div style="font-size:9px;letter-spacing:0.3em;color:rgba(255,255,255,0.3);margin-top:0.5rem;font-weight:700;">POSSIBILITIES</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Services Section -->
+<section id="services" class="py-36 px-6" style="background:var(--bg-light);">
+    <div class="max-w-6xl mx-auto">
+        <div class="mb-20 reveal">
+            <span class="gold-badge">Our Expertise</span>
+            <h2 class="text-3xl md:text-4xl font-bold mt-6 serif">事業内容</h2>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Service 1 -->
+            <div class="service-card reveal reveal-delay-1">
+                <div class="service-num">01</div>
+                <h3 class="text-xl font-bold mb-4 serif">広告企画・戦略立案</h3>
+                <p class="text-stone-500 leading-loose text-sm">
+                    企業、自治体、個人等への広告企画の策定。PR、販売促進分野における具体的かつ実行可能な手法の提案・実施。ブランドの価値を最大化する戦略を構築します。
+                </p>
+                <div style="margin-top:1.5rem;display:flex;align-items:center;gap:0.5rem;font-size:10px;font-weight:700;letter-spacing:0.2em;color:var(--brand-gold);">
+                    <span>LEARN MORE</span>
+                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M1 6h10M7 2l4 4-4 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </div>
+            </div>
+            <!-- Service 2 -->
+            <div class="service-card reveal reveal-delay-2">
+                <div class="service-num">02</div>
+                <h3 class="text-xl font-bold mb-4 serif">営業開発支援・事業提携</h3>
+                <p class="text-stone-500 leading-loose text-sm">
+                    新たな販路開拓やビジネスパートナーの選定。事業提携の提案から、特許品の販売・営業支援に至るまで、ビジネスの成長に必要なネットワーキングを支援します。
+                </p>
+                <div style="margin-top:1.5rem;display:flex;align-items:center;gap:0.5rem;font-size:10px;font-weight:700;letter-spacing:0.2em;color:var(--brand-gold);">
+                    <span>LEARN MORE</span>
+                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M1 6h10M7 2l4 4-4 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </div>
+            </div>
+            <!-- Service 3 -->
+            <div class="service-card reveal reveal-delay-3">
+                <div class="service-num">03</div>
+                <h3 class="text-xl font-bold mb-4 serif">仲介・紹介・プロデュース</h3>
+                <p class="text-stone-500 leading-loose text-sm">
+                    豊富な経験とネットワークを活かし、最適なリソースやパートナーを紹介・仲介。複数の要素を組み合わせ、新たな価値を創出するプロデュース業務を行います。
+                </p>
+                <div style="margin-top:1.5rem;display:flex;align-items:center;gap:0.5rem;font-size:10px;font-weight:700;letter-spacing:0.2em;color:var(--brand-gold);">
+                    <span>LEARN MORE</span>
+                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M1 6h10M7 2l4 4-4 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </div>
+            </div>
+            <!-- Service 4 -->
+            <div class="service-card reveal reveal-delay-4">
+                <div class="service-num">04</div>
+                <h3 class="text-xl font-bold mb-4 serif">自治体・任意団体支援</h3>
+                <p class="text-stone-500 leading-loose text-sm">
+                    地域活性化や公共プロジェクトの広報支援。行政や団体のニーズに寄り添い、社会的価値を高めるコミュニケーションデザインを提供します。
+                </p>
+                <div style="margin-top:1.5rem;display:flex;align-items:center;gap:0.5rem;font-size:10px;font-weight:700;letter-spacing:0.2em;color:var(--brand-gold);">
+                    <span>LEARN MORE</span>
+                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M1 6h10M7 2l4 4-4 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Section divider -->
+<div class="py-4" style="background:var(--bg-light);">
+    <div class="section-divider"></div>
+</div>
+
+<!-- Profile Section -->
+<section id="profile" class="py-36 px-6" style="background:var(--bg-light);">
+    <div class="max-w-6xl mx-auto">
+        <div class="mb-16 reveal">
+            <span class="gold-badge">Representative</span>
+        </div>
+        <div class="flex flex-col md:flex-row items-start gap-16 md:gap-24">
+            <!-- Image -->
+            <div class="w-full md:w-5/12 reveal reveal-delay-1">
+                <div class="profile-img-wrap">
+                    <div class="profile-img-inner">
+                        <!-- Abstract geometric portrait placeholder -->
+                        <svg viewBox="0 0 400 533" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;display:block;">
+                            <defs>
+                                <linearGradient id="bg-grad" x1="0" y1="0" x2="1" y2="1">
+                                    <stop offset="0%" stop-color="#e8e4de"/>
+                                    <stop offset="100%" stop-color="#d4cfc8"/>
+                                </linearGradient>
+                                <linearGradient id="gold-grad" x1="0" y1="0" x2="1" y2="1">
+                                    <stop offset="0%" stop-color="#c2a37d" stop-opacity="0.3"/>
+                                    <stop offset="100%" stop-color="#a8895f" stop-opacity="0.1"/>
+                                </linearGradient>
+                            </defs>
+                            <rect width="400" height="533" fill="url(#bg-grad)"/>
+                            <!-- Abstract geometric shapes suggesting a portrait -->
+                            <circle cx="200" cy="160" r="80" fill="#ccc9c2"/>
+                            <ellipse cx="200" cy="400" rx="130" ry="100" fill="#ccc9c2"/>
+                            <!-- Gold accent lines -->
+                            <line x1="60" y1="60" x2="340" y2="60" stroke="#c2a37d" stroke-width="0.5" stroke-opacity="0.4"/>
+                            <line x1="60" y1="473" x2="340" y2="473" stroke="#c2a37d" stroke-width="0.5" stroke-opacity="0.4"/>
+                            <!-- Compass-like decoration -->
+                            <circle cx="200" cy="266" r="40" fill="none" stroke="#c2a37d" stroke-width="0.5" stroke-opacity="0.3"/>
+                            <line x1="200" y1="226" x2="200" y2="306" stroke="#c2a37d" stroke-width="0.5" stroke-opacity="0.3"/>
+                            <line x1="160" y1="266" x2="240" y2="266" stroke="#c2a37d" stroke-width="0.5" stroke-opacity="0.3"/>
+                            <!-- Subtle text -->
+                            <text x="200" y="275" text-anchor="middle" font-family="Cormorant Garamond, serif" font-size="10" fill="#a8895f" fill-opacity="0.5" letter-spacing="4">BESPOKE</text>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+            <!-- Text -->
+            <div class="flex-1 reveal reveal-delay-2">
+                <h2 class="text-3xl md:text-4xl font-bold serif mb-2">小林 茂雄</h2>
+                <p class="cormorant text-xl font-light mb-8" style="color:var(--text-muted);letter-spacing:0.1em;">Kobayashi Shigeo</p>
+                <div style="width:40px;height:1px;background:var(--brand-gold);margin-bottom:2rem;"></div>
+                <div class="space-y-5 text-stone-600 text-sm leading-loose">
+                    <p>長年にわたり広告・プロモーションの最前線に従事。1994年からのキャリアを活かし、現在は「Bespoke」を立ち上げ。個別のニーズに徹底的に寄り添うコンサルティング・スタイルを貫く。</p>
+                    <p>広範なネットワークと、特許品を含む高品質な商材の目利きを活かし、単なる広告の枠を超えた「ビジネスの仕立て屋」として多方面で活動中。</p>
+                </div>
+                <!-- Tags -->
+                <div class="flex flex-wrap gap-2 mt-8">
+                    <span style="font-size:9px;font-weight:700;letter-spacing:0.2em;border:1px solid rgba(0,0,0,0.1);padding:5px 12px;color:var(--text-muted);">広告企画</span>
+                    <span style="font-size:9px;font-weight:700;letter-spacing:0.2em;border:1px solid rgba(0,0,0,0.1);padding:5px 12px;color:var(--text-muted);">PR戦略</span>
+                    <span style="font-size:9px;font-weight:700;letter-spacing:0.2em;border:1px solid rgba(0,0,0,0.1);padding:5px 12px;color:var(--text-muted);">事業開発</span>
+                    <span style="font-size:9px;font-weight:700;letter-spacing:0.2em;border:1px solid rgba(0,0,0,0.1);padding:5px 12px;color:var(--text-muted);">プロデュース</span>
+                    <span style="font-size:9px;font-weight:700;letter-spacing:0.2em;border:1px solid rgba(0,0,0,0.1);padding:5px 12px;color:var(--text-muted);">自治体支援</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Contact Section -->
+<section id="contact" class="py-36 px-6" style="background:#fff;">
+    <div class="max-w-6xl mx-auto">
+        <div class="grid md:grid-cols-2 gap-20 items-start">
+            <!-- Left: Info -->
+            <div class="reveal">
+                <span class="gold-badge">Contact</span>
+                <h2 class="text-3xl md:text-4xl font-bold serif mt-6 mb-4">お問い合わせ</h2>
+                <p class="text-stone-500 text-sm leading-loose mb-12">
+                    ご相談・お見積もりは無料です。<br>
+                    まずはお気軽にお問い合わせください。
+                </p>
+
+                <div class="space-y-8">
+                    <div>
+                        <div style="font-size:9px;font-weight:700;letter-spacing:0.3em;color:var(--text-muted);margin-bottom:0.75rem;">OFFICE ADDRESS</div>
+                        <p class="text-stone-700 leading-relaxed">〒166-0016<br>東京都杉並区成田西3-12-12</p>
+                    </div>
+                    <div>
+                        <div style="font-size:9px;font-weight:700;letter-spacing:0.3em;color:var(--text-muted);margin-bottom:0.75rem;">ENTITY</div>
+                        <p class="serif text-stone-700">Bespoke 個人事務所</p>
+                    </div>
+                    <div>
+                        <div style="font-size:9px;font-weight:700;letter-spacing:0.3em;color:var(--text-muted);margin-bottom:0.75rem;">NOTE</div>
+                        <p class="text-stone-400 text-sm leading-relaxed">
+                            詳細な提案資料や具体的なご相談につきましては、<br>
+                            既存のネットワークまたは直接のご面会にて承っております。
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Form -->
+            <div class="reveal reveal-delay-2">
+                <form id="contact-form" class="space-y-8">
+                    <div>
+                        <label class="form-label" for="name">お名前 / Name</label>
+                        <input class="form-input" type="text" id="name" name="name" placeholder="山田 太郎" required>
+                    </div>
+                    <div>
+                        <label class="form-label" for="company">会社名 / Company</label>
+                        <input class="form-input" type="text" id="company" name="company" placeholder="株式会社〇〇">
+                    </div>
+                    <div>
+                        <label class="form-label" for="email">メールアドレス / Email</label>
+                        <input class="form-input" type="email" id="email" name="email" placeholder="your@email.com" required>
+                    </div>
+                    <div>
+                        <label class="form-label" for="message">ご用件 / Message</label>
+                        <textarea class="form-input" id="message" name="message" rows="4" placeholder="ご相談内容をご記入ください" required style="resize:none;"></textarea>
+                    </div>
+                    <button type="submit" class="btn-primary w-full justify-center">
+                        送信する
+                        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 7h12M8 2l5 5-5 5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer class="footer-bg py-16 px-6">
+    <div class="max-w-6xl mx-auto">
+        <div class="flex flex-col md:flex-row justify-between items-center gap-8">
+            <div>
+                <span class="cormorant text-2xl font-light tracking-[0.25em]" style="color:rgba(255,255,255,0.85);">Bespoke</span>
+                <p style="font-size:9px;letter-spacing:0.3em;color:rgba(255,255,255,0.25);margin-top:0.5rem;font-weight:700;">KOBAYASHI SHIGEO OFFICE</p>
+            </div>
+            <nav class="flex gap-8">
+                <a href="#vision" style="font-size:9px;font-weight:700;letter-spacing:0.2em;color:rgba(255,255,255,0.3);text-decoration:none;transition:color 0.3s;" onmouseover="this.style.color='var(--brand-gold)'" onmouseout="this.style.color='rgba(255,255,255,0.3)'">VISION</a>
+                <a href="#services" style="font-size:9px;font-weight:700;letter-spacing:0.2em;color:rgba(255,255,255,0.3);text-decoration:none;transition:color 0.3s;" onmouseover="this.style.color='var(--brand-gold)'" onmouseout="this.style.color='rgba(255,255,255,0.3)'">SERVICES</a>
+                <a href="#profile" style="font-size:9px;font-weight:700;letter-spacing:0.2em;color:rgba(255,255,255,0.3);text-decoration:none;transition:color 0.3s;" onmouseover="this.style.color='var(--brand-gold)'" onmouseout="this.style.color='rgba(255,255,255,0.3)'">PROFILE</a>
+                <a href="#contact" style="font-size:9px;font-weight:700;letter-spacing:0.2em;color:rgba(255,255,255,0.3);text-decoration:none;transition:color 0.3s;" onmouseover="this.style.color='var(--brand-gold)'" onmouseout="this.style.color='rgba(255,255,255,0.3)'">CONTACT</a>
+            </nav>
+        </div>
+        <div style="height:1px;background:rgba(255,255,255,0.06);margin:2rem 0;"></div>
+        <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+            <span style="font-size:9px;letter-spacing:0.4em;color:rgba(255,255,255,0.2);font-weight:700;">© 2025 BESPOKE OFFICE. ALL RIGHTS RESERVED.</span>
+            <span style="font-size:9px;letter-spacing:0.2em;color:rgba(255,255,255,0.15);">東京都杉並区成田西3-12-12</span>
+        </div>
+    </div>
+</footer>
+
+<script>
+    // ── Custom cursor ──
+    const dot = document.getElementById('cursor-dot');
+    const ring = document.getElementById('cursor-ring');
+    let mouseX = 0, mouseY = 0;
+    let ringX = 0, ringY = 0;
+
+    document.addEventListener('mousemove', e => {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+        dot.style.left = mouseX + 'px';
+        dot.style.top = mouseY + 'px';
+    });
+
+    function animateRing() {
+        ringX += (mouseX - ringX) * 0.12;
+        ringY += (mouseY - ringY) * 0.12;
+        ring.style.left = ringX + 'px';
+        ring.style.top = ringY + 'px';
+        requestAnimationFrame(animateRing);
+    }
+    animateRing();
+
+    document.querySelectorAll('a, button').forEach(el => {
+        el.addEventListener('mouseenter', () => {
+            dot.style.width = '12px';
+            dot.style.height = '12px';
+            ring.style.width = '50px';
+            ring.style.height = '50px';
+        });
+        el.addEventListener('mouseleave', () => {
+            dot.style.width = '8px';
+            dot.style.height = '8px';
+            ring.style.width = '36px';
+            ring.style.height = '36px';
+        });
+    });
+
+    // ── Progress bar ──
+    const progressBar = document.getElementById('progress-bar');
+    window.addEventListener('scroll', () => {
+        const scrollTop = window.scrollY;
+        const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+        const progress = (scrollTop / docHeight) * 100;
+        progressBar.style.width = progress + '%';
+    });
+
+    // ── Header scroll effect ──
+    const header = document.getElementById('header');
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 40) {
+            header.classList.add('scrolled');
+        } else {
+            header.classList.remove('scrolled');
+        }
+    });
+
+    // ── Reveal on scroll ──
+    const revealObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, { threshold: 0.1, rootMargin: '0px 0px -60px 0px' });
+
+    document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+    // ── Mobile menu ──
+    const menuBtn = document.getElementById('menu-btn');
+    const hamburger = document.getElementById('hamburger');
+    const mobileMenu = document.getElementById('mobile-menu');
+    let menuOpen = false;
+
+    function toggleMenu() {
+        menuOpen = !menuOpen;
+        hamburger.classList.toggle('open', menuOpen);
+        mobileMenu.classList.toggle('open', menuOpen);
+        document.body.style.overflow = menuOpen ? 'hidden' : '';
+        menuBtn.setAttribute('aria-label', menuOpen ? 'メニューを閉じる' : 'メニューを開く');
+    }
+
+    menuBtn.addEventListener('click', toggleMenu);
+
+    document.querySelectorAll('[data-close-menu]').forEach(link => {
+        link.addEventListener('click', () => {
+            if (menuOpen) toggleMenu();
+        });
+    });
+
+    // ── Contact form ──
+    const form = document.getElementById('contact-form');
+    const toast = document.getElementById('toast');
+
+    form.addEventListener('submit', e => {
+        e.preventDefault();
+        // Show toast notification
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 3500);
+        form.reset();
+    });
+
+    // ── Smooth scroll for anchor links ──
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+            const href = this.getAttribute('href');
+            if (href === '#') return;
+            const target = document.querySelector(href);
+            if (target) {
+                e.preventDefault();
+                const offset = 80;
+                const top = target.getBoundingClientRect().top + window.scrollY - offset;
+                window.scrollTo({ top, behavior: 'smooth' });
+            }
+        });
+    });
+</script>
+</body>
+</html>
